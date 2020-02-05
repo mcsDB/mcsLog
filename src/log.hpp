@@ -8,8 +8,10 @@ namespace mcsLog {
         void *_logfile_mmap_addr;
 
         void recover();
+        ~Logger();
     public:
         Logger(const char* path);
         unsigned long long Write(void* value, int length);
     };
 } // namespace Logger
+
