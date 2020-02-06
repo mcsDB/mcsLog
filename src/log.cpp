@@ -1,5 +1,3 @@
-#define LOGSIZE 128*1024*1024
-
 #include <cstring>
 #include <fcntl.h>
 #include <stdexcept>
@@ -8,6 +6,8 @@
 #include <sys/types.h>
 
 #include "log.hpp"
+
+#define LOGSIZE 128*1024*1024
 
 namespace mcsLog {
 
@@ -45,7 +45,8 @@ namespace mcsLog {
         }
     }
 
-    unsigned long long Logger::Write(void* value, int length) {        
+    void *Logger::Write(void* value) {
+        int length = sizeof(*(char *)value);
         long long write_offset = __sync_fetch_and_add(&_logfile_offset, length);
         // [TODO]: If write_offset is beyond resize_threshold, extend the file size
         std::memcpy((void *)((unsigned long)_logfile_mmap_addr + write_offset), value, length);

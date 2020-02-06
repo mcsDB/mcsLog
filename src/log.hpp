@@ -11,7 +11,7 @@ namespace mcsLog {
         ~Logger();
     public:
         Logger(const char* path);
-        unsigned long long Write(void* value, int length);
+        void *Write(void* value);
     };
 } // namespace mcsLog
 
