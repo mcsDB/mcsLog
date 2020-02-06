@@ -47,7 +47,7 @@ namespace mcsLog {
     unsigned long long Logger::Write(void* value, int length) {        
         long long write_offset = __sync_fetch_and_add(&_logfile_offset, length);
         // [TODO]: If write_offset is beyond resize_threshold, extend the file size
-        memcpy(_logfile_mmap_addr + write_offset, value, length);
+        std::memcpy((void *)(_logfile_mmap_addr + write_offset), value, length);
     }
 
 } // namespace mcsLog
