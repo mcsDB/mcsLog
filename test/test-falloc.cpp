@@ -12,7 +12,7 @@ int main() {
         return 1;
       posix_fallocate(fd, 0, 400000);
       void* addr = mmap(NULL, 400000, PROT_READ | PROT_WRITE,
-          MAP_SHARED | MAP_POPULATE, fd, 0);
+          MAP_PRIVATE | MAP_POPULATE, fd, 0);
       if (addr == 0)
         cout << "mmap failed" << endl;
       const char *buffer1 = "AAAAA";

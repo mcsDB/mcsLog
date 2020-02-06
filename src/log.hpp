@@ -1,10 +1,10 @@
 namespace mcsLog {
   class LogEntry {
     private:
-      const char *_value;
+      char *_value;
       int _length;
     public:
-      LogEntry(const char *entry);
+      LogEntry(char *entry);
     friend class Logger;
   };
 
