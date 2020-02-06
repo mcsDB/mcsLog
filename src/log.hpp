@@ -1,10 +1,15 @@
+#include <atomic>
+
 namespace mcsLog {
+
   class LogEntry {
     private:
-      char *_value;
+      const char *_value;
       int _length;
     public:
-      LogEntry(char *entry);
+      LogEntry(const char *entry);
+      const char *getEntry();
+      int getEntryLength();
     friend class Logger;
   };
 
@@ -12,7 +17,7 @@ namespace mcsLog {
     private:
       int _logfile_fd;
       const char *_logfile_path;
-      long long _logfile_offset;
+      std::atomic<long long> _logfile_offset;
       long long _logfile_size;
       void *_logfile_mmap_addr;
 
@@ -20,7 +25,7 @@ namespace mcsLog {
       ~Logger();
     public:
       Logger(const char* path);
-      void *Write(void* value);
+      void *Write(const char *value, int length);
       const char *getLogfilePath();
   };
 

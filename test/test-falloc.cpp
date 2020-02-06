@@ -1,6 +1,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <cstring>
+#include <chrono>
 #include <sys/mman.h>
 #include <iostream>
 
@@ -15,10 +16,19 @@ int main() {
           MAP_PRIVATE | MAP_POPULATE, fd, 0);
       if (addr == 0)
         cout << "mmap failed" << endl;
-      const char *buffer1 = "AAAAA";
-      const char *buffer2 = "BBBBB";
+      const char *buffer1 = "AAAA";
+      const char *buffer2 = "BBBB";
       write(fd, buffer1, 6);
-      auto ret = memcpy((void *)((unsigned long long)addr), buffer2, 6); 
-      if (ret != addr)
-        cout << "memcpy failed" << endl;
+      auto start = std::chrono::high_resolution_clock::now();
+      auto end = start;
+      auto duration = end - start;
+      for (auto i = 0; i < 1000000000000; i++) {
+        start = std::chrono::high_resolution_clock::now();
+        auto ret = memcpy((void *)((unsigned long long)addr), buffer2, 6);
+        end = std::chrono::high_resolution_clock::now();
+        duration += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
+        if (ret != addr)
+          cout << "memcpy failed" << endl;
+      }
+      std::cout << duration.count() << std::endl;
 }
