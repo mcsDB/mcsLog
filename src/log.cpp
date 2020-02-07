@@ -66,7 +66,9 @@ namespace mcsLog {
 
   void *Logger::Write(const char *value, int length) {
     for (auto iter = 0; iter < ITERATIONS; iter++) {
-      long long write_offset = _logfile_offset.fetch_add(length);
+      long long write_offset = _logfile_offset;
+      _logfile_offset += length; 
+      // long long write_offset = _logfile_offset.fetch_add(length);
       // TODO: If write_offset is beyond resize_threshold, extend the file size
       std::memcpy((void *)((unsigned long)_logfile_mmap_addr + write_offset), value, length);
     }
