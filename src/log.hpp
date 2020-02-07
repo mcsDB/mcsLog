@@ -1,17 +1,33 @@
-namespace mcsLog {
-    class Logger {
-    private:
-        int _logfile_fd;
-        const char *_logfile_path;
-        long long _logfile_offset;
-        long long _logfile_size;
-        void *_logfile_mmap_addr;
+#include <atomic>
 
-        void recover();
-        ~Logger();
+namespace mcsLog {
+
+  class LogEntry {
+    private:
+      const char *_value;
+      int _length;
     public:
-        Logger(const char* path);
-        unsigned long long Write(void* value, int length);
-    };
+      LogEntry(const char *entry);
+      const char *getEntry();
+      int getEntryLength();
+    friend class Logger;
+  };
+
+  class Logger {
+    private:
+      int _logfile_fd;
+      const char *_logfile_path;
+      std::atomic<long long> _logfile_offset;
+      long long _logfile_size;
+      void *_logfile_mmap_addr;
+
+      void recover();
+      ~Logger();
+    public:
+      Logger(const char* path);
+      void *Write(const char *value, int length);
+      const char *getLogfilePath();
+  };
+
 } // namespace mcsLog
 
