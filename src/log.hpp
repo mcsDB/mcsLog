@@ -25,7 +25,7 @@ namespace mcsLog {
       ~Logger();
     public:
       Logger(const char* path);
-      void *Write(const char *value, int length);
+      void *Write(const char *value, int length, bool threadSync);
       const char *getLogfilePath();
   };
 
