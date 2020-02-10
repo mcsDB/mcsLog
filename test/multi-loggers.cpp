@@ -5,13 +5,15 @@
 #include <fstream>
 #include <iostream>
 #include <pthread.h>
+#include <string>
 
 #include "../src/log.hpp"
 #include "../utils/macros.hpp"
 
 namespace mcsLog {
 
-  mcsLog::Logger *log;
+  mcsLog::Logger *log[NUM_THREADS];
+  int assignLogCounter = 0;
   unsigned long long writingTime = 0;
   unsigned long long threadCreateTimes = 0;
   unsigned long long dataWritten = NUM_THREADS*VAL_SIZE*ITERATIONS;
@@ -23,7 +25,7 @@ namespace mcsLog {
   static void *writeHelper(void *entry) {
     const char *value = reinterpret_cast<struct LogEntry *>(entry)->getEntry();
     const unsigned long long length = reinterpret_cast<struct LogEntry *>(entry)->getEntryLength();
-    log->Write(value, length, true);
+    log[assignLogCounter++]->Write(value, length, false);
   }
 
   void timePthreadCreates() {
@@ -40,11 +42,13 @@ namespace mcsLog {
   }
 
   void InitWriters() {
-    const char *path = LOG_PATH;
     char *stringValue = (char *)malloc(sizeof(char)*VAL_SIZE);
     REPEAT(stringValue, VAL_SIZE, 'A');
     const char* value = stringValue;
-    log = new mcsLog::Logger(path);
+    for (auto i = 0; i < NUM_THREADS; i++) {
+      std::string path = std::to_string(i) + LOG_PATH;
+      log[i] = new mcsLog::Logger(path.c_str());
+    }
     struct mcsLog::LogEntry *entry =  new mcsLog::LogEntry(value);
 
     // Concurrent threads writing to the log
@@ -57,18 +61,6 @@ namespace mcsLog {
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
     writingTime = duration.count();
-  }
-}
-
-void checkLogEntries(mcsLog::Logger *log) {
-  unsigned long long count = 0;
-  std::string line = "";
-  std::ifstream myfile ((std::string)mcsLog::log->getLogfilePath());
-  if (myfile.is_open()) {
-    while (getline (myfile, line))
-      count += (unsigned long long)std::count(line.begin(), line.end(), 'A');
-    assert(count == ITERATIONS*VAL_SIZE*NUM_THREADS);
-    myfile.close();
   }
 }
 

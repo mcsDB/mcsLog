@@ -1,5 +1,6 @@
 #include <cstring>
 #include <fcntl.h>
+#include <iostream>
 #include <stdexcept>
 #include <sys/mman.h>
 #include <unistd.h>
@@ -47,9 +48,11 @@ namespace mcsLog {
     if (_logfile_fd < 0) {
       _logfile_offset = 0;
       _logfile_fd = open(_logfile_path, O_RDWR | O_CREAT, 0666);
-      if (_logfile_fd < 0)
-        throw std::runtime_error("Error: Could not open the logfile");
-      // TODO: Make this environment independent?
+      if (_logfile_fd < 0) {
+        std::cout << _logfile_path << std::endl;
+        throw std::runtime_error("Error: Could not open the logfile ");
+      }
+        // TODO: Make this environment independent?
       int falloc_ret = posix_fallocate(_logfile_fd, 0, LOG_SIZE);
       if (falloc_ret < 0)
         throw std::runtime_error("Error: Could not allocate space for the logfile");
@@ -64,9 +67,16 @@ namespace mcsLog {
     }
   }
 
-  void *Logger::Write(const char *value, int length) {
+  void *Logger::Write(const char *value, int length, bool threadSync) {
     for (auto iter = 0; iter < ITERATIONS; iter++) {
-      long long write_offset = _logfile_offset.fetch_add(length);
+      long long write_offset;
+      if (threadSync) {
+        write_offset = _logfile_offset.fetch_add(length);
+      }
+      else {
+        write_offset = _logfile_offset;
+        _logfile_offset += length;
+      }
       // TODO: If write_offset is beyond resize_threshold, extend the file size
       std::memcpy((void *)((unsigned long)_logfile_mmap_addr + write_offset), value, length);
     }
