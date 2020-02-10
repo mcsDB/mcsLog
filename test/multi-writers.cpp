@@ -44,7 +44,7 @@ namespace mcsLog {
     char *stringValue = (char *)malloc(sizeof(char)*VAL_SIZE);
     REPEAT(stringValue, VAL_SIZE, 'A');
     const char* value = stringValue;
-    log = new mcsLog::Logger(path);
+    log = new mcsLog::Logger(path, LOG_SIZE);
     struct mcsLog::LogEntry *entry =  new mcsLog::LogEntry(value);
 
     // Concurrent threads writing to the log
@@ -76,6 +76,9 @@ int main() {
   mcsLog::timePthreadCreates();
   mcsLog::InitWriters();
   float bandwidth = (mcsLog::dataWritten * 1.0)/(mcsLog::writingTime - mcsLog::threadCreateTimes);
+  std::cout << "#Threads  : " << NUM_THREADS << std::endl;
+  std::cout << "ValueSize : " << VAL_SIZE << std::endl;
+  std::cout << "Iterations: " << ITERATIONS << std::endl;
   std::cout << "Bandwidth : " << bandwidth << " GiB/s" << std::endl;
   std::cout << "TotalTime : " << ((mcsLog::writingTime - mcsLog::threadCreateTimes)*1.0)/1000000000  << " s"<< std::endl;
   std::cout << "TotalData : " << (mcsLog::dataWritten * 1.0)/1000000000 << " GiB" << std::endl;

@@ -1,3 +1,4 @@
+#include <atomic>
 #include <bits/stdc++.h>
 #include <cassert>
 #include <chrono>
@@ -13,7 +14,7 @@
 namespace mcsLog {
 
   mcsLog::Logger *log[NUM_THREADS];
-  int assignLogCounter = 0;
+  std::atomic<int> assignLogCounter;
   unsigned long long writingTime = 0;
   unsigned long long threadCreateTimes = 0;
   unsigned long long dataWritten = NUM_THREADS*VAL_SIZE*ITERATIONS;
@@ -25,7 +26,7 @@ namespace mcsLog {
   static void *writeHelper(void *entry) {
     const char *value = reinterpret_cast<struct LogEntry *>(entry)->getEntry();
     const unsigned long long length = reinterpret_cast<struct LogEntry *>(entry)->getEntryLength();
-    log[assignLogCounter++]->Write(value, length, false);
+    log[assignLogCounter.fetch_add(1)]->Write(value, length, false);
   }
 
   void timePthreadCreates() {
@@ -45,9 +46,10 @@ namespace mcsLog {
     char *stringValue = (char *)malloc(sizeof(char)*VAL_SIZE);
     REPEAT(stringValue, VAL_SIZE, 'A');
     const char* value = stringValue;
+    std::cout << "Writing value : " << value << std::endl; 
     for (auto i = 0; i < NUM_THREADS; i++) {
       std::string path = std::to_string(i) + LOG_PATH;
-      log[i] = new mcsLog::Logger(path.c_str());
+      log[i] = new mcsLog::Logger(path.c_str(), LOG_SIZE/NUM_THREADS);
     }
     struct mcsLog::LogEntry *entry =  new mcsLog::LogEntry(value);
 
@@ -68,6 +70,9 @@ int main() {
   mcsLog::timePthreadCreates();
   mcsLog::InitWriters();
   float bandwidth = (mcsLog::dataWritten * 1.0)/(mcsLog::writingTime - mcsLog::threadCreateTimes);
+  std::cout << "#Threads  : " << NUM_THREADS << std::endl;
+  std::cout << "ValueSize : " << VAL_SIZE << std::endl;
+  std::cout << "Iterations: " << ITERATIONS << std::endl;
   std::cout << "Bandwidth : " << bandwidth << " GiB/s" << std::endl;
   std::cout << "TotalTime : " << ((mcsLog::writingTime - mcsLog::threadCreateTimes)*1.0)/1000000000  << " s"<< std::endl;
   std::cout << "TotalData : " << (mcsLog::dataWritten * 1.0)/1000000000 << " GiB" << std::endl;

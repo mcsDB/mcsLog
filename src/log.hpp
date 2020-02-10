@@ -21,10 +21,10 @@ namespace mcsLog {
       long long _logfile_size;
       void *_logfile_mmap_addr;
 
-      void recover();
+      void recover(long long size);
       ~Logger();
     public:
-      Logger(const char* path);
+      Logger(const char* path, long long size);
       void *Write(const char *value, int length, bool threadSync);
       const char *getLogfilePath();
   };
