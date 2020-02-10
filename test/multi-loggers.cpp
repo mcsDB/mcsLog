@@ -46,7 +46,6 @@ namespace mcsLog {
     char *stringValue = (char *)malloc(sizeof(char)*VAL_SIZE);
     REPEAT(stringValue, VAL_SIZE, 'A');
     const char* value = stringValue;
-    std::cout << "Writing value : " << value << std::endl; 
     for (auto i = 0; i < NUM_THREADS; i++) {
       std::string path = std::to_string(i) + LOG_PATH;
       log[i] = new mcsLog::Logger(path.c_str(), LOG_SIZE/NUM_THREADS);
