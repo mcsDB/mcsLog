@@ -69,6 +69,11 @@ int main() {
   mcsLog::timePthreadCreates();
   mcsLog::InitWriters();
   float bandwidth = (mcsLog::dataWritten * 1.0)/(mcsLog::writingTime - mcsLog::threadCreateTimes);
+  std::cout << "sync=false, " << NUM_THREADS << ", " << VAL_SIZE << " B, ";
+  std::cout << ITERATIONS << ", " << (mcsLog::dataWritten * 1.0)/1000000000 << " GiB, ";
+  std::cout << ((mcsLog::writingTime - mcsLog::threadCreateTimes)*1.0)/1000000000 << " s, ";
+  std::cout << bandwidth << " GiB/s" << std::endl;
+  /*
   std::cout << "#Threads  : " << NUM_THREADS << std::endl;
   std::cout << "ValueSize : " << VAL_SIZE << std::endl;
   std::cout << "Iterations: " << ITERATIONS << std::endl;
@@ -76,5 +81,6 @@ int main() {
   std::cout << "TotalTime : " << ((mcsLog::writingTime - mcsLog::threadCreateTimes)*1.0)/1000000000  << " s"<< std::endl;
   std::cout << "TotalData : " << (mcsLog::dataWritten * 1.0)/1000000000 << " GiB" << std::endl;
   // checkLogEntries(log);
+  */
 }
 
