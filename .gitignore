@@ -34,3 +34,5 @@
 *.out
 *.app
 
+# Benchmark Configs
+benchmarks/macros*
