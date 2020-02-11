@@ -1,5 +1,5 @@
-set Servers to paragraphs of (do shell script "/bin/cat
-$HOME/sosp19/deploy/livenodes_1")
+-- Run with command: osascript launchTermScript
+set Servers to paragraphs of (do shell script "/bin/cat $HOME/projects/github/mcsLog/utils/livenodes")
 
 if application "iTerm" is running then
   tell application "iTerm"
@@ -22,8 +22,7 @@ if application "iTerm" is running then
             tell application "System Events" to keystroke "d" using command down
           end if
           delay 1
-          write text "ssh -i $HOME/disaggregatedblockchain.pem cc@" & (item n of
-Servers)
+          write text "ssh -i $HOME/disaggregatedblockchain.pem cc@" & (item n of Servers)
         end repeat
       end tell
     end tell
