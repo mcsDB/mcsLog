@@ -6,7 +6,7 @@ if [ "$#" != 1 ]; then
 fi
 
 config=0
-while [ config != NUM_CONFIGS ]
+while [ $config -le $NUM_CONFIGS ]
 do
   for fileName in "multi-writers.cpp" "multi-loggers.cpp"
   do
