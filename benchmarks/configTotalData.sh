@@ -8,8 +8,10 @@ fileNumber=0
 threads=1
 
 total_data=$(($1 * $GigaByte))
+# Iterating on number of threads
 while [ $threads -le $MAX_THREADS ]
 do
+  # Iterating on reasonable value_sizes
   for value_size in 64 128 256 512 1024 2048 4096
   do
     iterations=$(($total_data/$(($value_size * $threads))))
