@@ -28,7 +28,7 @@ namespace mcsLog {
     // Sets _logfile_fd, _logfile_size, and _logfile_offset
     recover(size);
     _logfile_mmap_addr = mmap(NULL, _logfile_size, PROT_READ | PROT_WRITE,
-        MAP_SHARED | MAP_POPULATE, _logfile_fd, 0);
+        MAP_SHARED | MAP_POPULATE | MAP_ANONYMOUS, _logfile_fd, 0);
     if (_logfile_mmap_addr == 0) {
       throw std::runtime_error("Error: Could not mmap the logfile");
     }
@@ -67,18 +67,11 @@ namespace mcsLog {
     }
   }
 
-  void *Logger::Write(const char *value, int length, bool threadSync) {
+  void *Logger::Write(const char *value, int length) {
     for (auto iter = 0; iter < ITERATIONS; iter++) {
-      long long write_offset;
-      if (threadSync) {
-        write_offset = _logfile_offset.fetch_add(length);
-      }
-      else {
-        write_offset = _logfile_offset;
-        _logfile_offset += length;
-      }
       // TODO: If write_offset is beyond resize_threshold, extend the file size
-      std::memcpy((void *)((unsigned long)_logfile_mmap_addr + write_offset), value, length);
+      std::memcpy((void *)((unsigned long)_logfile_mmap_addr + _logfile_offset), value, length);
+      _logfile_offset += length;
     }
   }
 
