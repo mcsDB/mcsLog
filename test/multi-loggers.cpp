@@ -26,7 +26,7 @@ namespace mcsLog {
   static void *writeHelper(void *entry) {
     const char *value = reinterpret_cast<struct LogEntry *>(entry)->getEntry();
     const unsigned long long length = reinterpret_cast<struct LogEntry *>(entry)->getEntryLength();
-    log[assignLogCounter.fetch_add(1)]->Write(value, length, false);
+    log[assignLogCounter.fetch_add(1)]->Write(value, length);
   }
 
   void timePthreadCreates() {
