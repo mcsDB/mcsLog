@@ -28,7 +28,7 @@ namespace mcsLog {
     // Sets _logfile_fd, _logfile_size, and _logfile_offset
     recover(size);
     _logfile_mmap_addr = mmap(NULL, _logfile_size, PROT_READ | PROT_WRITE,
-        MAP_SHARED | MAP_POPULATE | MAP_ANONYMOUS, _logfile_fd, 0);
+        MAP_SHARED | MAP_POPULATE | MAP_ANONYMOUS, -1, 0);
     if (_logfile_mmap_addr == 0) {
       throw std::runtime_error("Error: Could not mmap the logfile");
     }
