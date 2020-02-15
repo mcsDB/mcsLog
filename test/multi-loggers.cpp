@@ -18,6 +18,7 @@ namespace mcsLog {
   unsigned long long writingTime = 0;
   unsigned long long threadCreateTimes = 0;
   unsigned long long dataWritten = NUM_THREADS*VAL_SIZE*ITERATIONS;
+  cpu_set_t cpuset;
 
   static void *dummyFunction(void *value) {
     return NULL;
@@ -33,8 +34,13 @@ namespace mcsLog {
     void *value;
     auto start = std::chrono::high_resolution_clock::now();
     pthread_t thread[NUM_THREADS];
-    for (auto i = 0; i < NUM_THREADS; i++)
+    for (auto i = 0; i < NUM_THREADS; i++) {
       pthread_create(&thread[i], NULL, &dummyFunction, value);
+      auto s = pthread_setaffinity_np(thread[i], sizeof(cpu_set_t), &cpuset);
+      if (s != 0) {
+        std::cout << "Error setting cpu affinity" << std::endl;
+      }
+    }
     for (auto i = 0; i < NUM_THREADS; i++)
       pthread_join(thread[i], NULL);
     auto end = std::chrono::high_resolution_clock::now();
@@ -66,6 +72,10 @@ namespace mcsLog {
 }
 
 int main() {
+  CPU_ZERO(&mcsLog::cpuset);
+  for (auto i = 0; i < NUM_THREADS; i++) {
+    CPU_SET(i, &mcsLog::cpuset);
+  }
   mcsLog::timePthreadCreates();
   mcsLog::InitWriters();
   float bandwidth = (mcsLog::dataWritten * 1.0)/(mcsLog::writingTime - mcsLog::threadCreateTimes);
