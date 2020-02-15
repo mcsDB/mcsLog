@@ -11,6 +11,7 @@ fileName="multi-loggers.cpp"
 
 while [ $config -le $(($NUM_CONFIGS - 1)) ]
 do
+  echo "Running config: $config"
   sync; echo 1 > /proc/sys/vm/drop_caches
   sync; echo 2 > /proc/sys/vm/drop_caches
   sync; echo 3 > /proc/sys/vm/drop_caches
