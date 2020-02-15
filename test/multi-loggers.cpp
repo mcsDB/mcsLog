@@ -47,7 +47,7 @@ namespace mcsLog {
     REPEAT(stringValue, VAL_SIZE, 'A');
     const char* value = stringValue;
     for (auto i = 0; i < NUM_THREADS; i++) {
-      std::string path = std::to_string(i) + LOG_PATH;
+      std::string path = LOG_PATH + std::to_string(i) + ".out";
       log[i] = new mcsLog::Logger(path.c_str(), LOG_SIZE/NUM_THREADS);
     }
     struct mcsLog::LogEntry *entry =  new mcsLog::LogEntry(value);

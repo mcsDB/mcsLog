@@ -10,11 +10,11 @@
 #include "./monotonic_timer.h"
 
 #define SAMPLES 1
-#define TIMES 1024*1024
+#define TIMES 1024
 #define BYTES_PER_GB (1024*1024*1024LL)
 #define BYTES_PER_MB (1024*1024LL)
 #define BYTES_PER_KB (1024LL)
-#define SIZE (1*BYTES_PER_KB)
+#define SIZE (1*BYTES_PER_GB)
 #define PAGE_SIZE (1<<12)
 #define timefun(f) timeit(f, #f)
 
@@ -42,8 +42,8 @@ void timeit(void (*function)(void*, size_t), char* name) {
     before = monotonic_time(); 
     int j;
     for (j = 0; j < TIMES; j++) {
-      function(array + j*SIZE, SIZE);
-      // function(array, SIZE);
+      // function(array + j*SIZE, SIZE);
+      function(array, SIZE);
     }
     after = monotonic_time();
 

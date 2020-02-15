@@ -63,6 +63,7 @@ namespace mcsLog {
       _logfile_size = size;
       // TODO: Implement recovery on the existing logfile
       // For now, rewriting the logfile - setting the offset to 0
+      std::cout << _logfile_path << std::endl;
       throw std::runtime_error("Error: Recovery is not implemented");
     }
   }
