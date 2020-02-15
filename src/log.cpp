@@ -23,12 +23,17 @@ namespace mcsLog {
     return _length;
   }
 
+  void Logger::preset() {
+    memset(_logfile_mmap_addr, '-', _logfile_size);
+  }
+
   Logger::Logger(const char *path, long long size) {
     _logfile_path = path;
     // Sets _logfile_fd, _logfile_size, and _logfile_offset
     recover(size);
     _logfile_mmap_addr = mmap(NULL, _logfile_size, PROT_READ | PROT_WRITE,
         MAP_SHARED | MAP_POPULATE | MAP_ANONYMOUS, -1, 0);
+    preset();
     if (_logfile_mmap_addr == 0) {
       throw std::runtime_error("Error: Could not mmap the logfile");
     }
@@ -71,6 +76,7 @@ namespace mcsLog {
     for (auto iter = 0; iter < ITERATIONS; iter++) {
       // TODO: If write_offset is beyond resize_threshold, extend the file size
       std::memcpy((void *)((unsigned long)_logfile_mmap_addr + _logfile_offset), value, length);
+      // std::memset((void *)((unsigned long)_logfile_mmap_addr + _logfile_offset), 'A', length);
       _logfile_offset += length;
     }
   }

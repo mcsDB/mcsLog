@@ -22,6 +22,7 @@ namespace mcsLog {
       void *_logfile_mmap_addr;
 
       void recover(long long size);
+      void preset();
       ~Logger();
     public:
       Logger(const char* path, long long size);
