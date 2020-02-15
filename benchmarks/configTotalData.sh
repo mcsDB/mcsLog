@@ -9,8 +9,7 @@ MegaByte=$((1024 * 1024))
 GigaByte=$((1024 * 1024 * 1024))
 fileNumber=0
 threads=$MAX_THREADS
-valueRange=($((1 * $KiloByte)) $((2 * $KiloByte)) $((3 * $KiloByte)) $((4 *
-$KiloByte)) $((16 * $KiloByte)) $((64 * $KiloByte)) $((256 * $KiloByte)) $MegaByte $((4 * $MegaByte)))
+valueRange=($((1 * $KiloByte)) $((2 * $KiloByte)) $((4 * $KiloByte)) $((8 *$KiloByte)) $((16 * $KiloByte)) $((64 * $KiloByte)) $((256 * $KiloByte)) $MegaByte $((4 * $MegaByte)))
 total_data=$(($1 * $GigaByte))
 # Iterating on number of threads
 while [ $threads -le $MAX_THREADS ]
