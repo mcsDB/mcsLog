@@ -61,8 +61,13 @@ namespace mcsLog {
     // Concurrent threads writing to the log
     auto start = std::chrono::high_resolution_clock::now();
     pthread_t thread[NUM_THREADS];
-    for (auto i = 0; i < NUM_THREADS; i++)
+    for (auto i = 0; i < NUM_THREADS; i++) {
       pthread_create(&thread[i], NULL, &(writeHelper), entry);
+      auto s = pthread_setaffinity_np(thread[i], sizeof(cpu_set_t), &cpuset);
+      if (s != 0) {
+        std::cout << "Error setting cpu affinity" << std::endl;
+      }
+    }
     for (auto i = 0; i < NUM_THREADS; i++)
       pthread_join(thread[i], NULL);
     auto end = std::chrono::high_resolution_clock::now();
