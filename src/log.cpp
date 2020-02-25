@@ -1,11 +1,14 @@
+#include <immintrin.h>
 #include <cstring>
 #include <fcntl.h>
+#include <immintrin.h>
 #include <iostream>
 #include <stdexcept>
 #include <sys/mman.h>
 #include <unistd.h>
 
 #include "log.hpp"
+#include "nontemporal.h"
 #include "../utils/macros.hpp"
 
 namespace mcsLog {
@@ -76,7 +79,19 @@ namespace mcsLog {
     for (auto iter = 0; iter < ITERATIONS; iter++) {
       // TODO: If write_offset is beyond resize_threshold, extend the file size
       std::memcpy((void *)((unsigned long)_logfile_mmap_addr + _logfile_offset), value, length);
+      for (auto cl = 0; cl < length; cl += CLFLUSH_SIZE) {
+        _mm_clwb((unsigned long)_logfile_mmap_addr + _logfile_offset + cl);
+      }
+      _mm_sfence();
       // std::memset((void *)((unsigned long)_logfile_mmap_addr + _logfile_offset), 'A', length);
+      _logfile_offset += length;
+    }
+  }
+
+  void *Logger::WriteNT(const char *value, int length) {
+    for (auto iter = 0; iter < ITERATIONS; iter++) {
+      MOVNT((void *)((unsigned long)_logfile_mmap_addr + _logfile_offset), value, length);
+      _mm_sfence();
       _logfile_offset += length;
     }
   }
