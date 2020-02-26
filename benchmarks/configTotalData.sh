@@ -17,7 +17,8 @@ do
   for nt in 0 1
   do
     # Iterating on reasonable value_sizes
-    for value_size in ${valueRange[@]}
+    # for value_size in ${valueRange[@]}
+    for value_size in 256
     do
       iterations=$(($total_data/$(($value_size * $threads))))
       echo "#define LOG_PATH \"$PMEMDIR/log\"" >> macros$fileNumber.hpp
