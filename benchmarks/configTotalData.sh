@@ -8,7 +8,7 @@ KiloByte=$((1024))
 MegaByte=$((1024 * 1024))
 GigaByte=$((1024 * 1024 * 1024))
 fileNumber=0
-threads=$MAX_THREADS
+threads=1
 valueRange=($((1 * $KiloByte)) $((2 * $KiloByte)) $((4 * $KiloByte)) $((8 *$KiloByte)) $((16 * $KiloByte)) $((64 * $KiloByte)) $((256 * $KiloByte)) $MegaByte $((4 * $MegaByte)))
 total_data=$(($1 * $GigaByte))
 # Iterating on number of threads
@@ -31,6 +31,6 @@ do
       echo "#define IS_TEMPORAL $nt" >> macros$fileNumber.hpp
       fileNumber=$(($fileNumber + 1))
     done
-    threads=$(($threads * 2))
   done
+  threads=$(($threads * 2))
 done
