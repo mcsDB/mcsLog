@@ -27,6 +27,7 @@ namespace mcsLog {
     public:
       Logger(const char* path, long long size);
       void *Write(const char *value, int length);
+      void *WriteNT(const char *value, int length);
       const char *getLogfilePath();
   };
 

@@ -16,7 +16,7 @@ do
   sync; echo 2 > /proc/sys/vm/drop_caches
   sync; echo 3 > /proc/sys/vm/drop_caches
   cp macros$config.hpp ../utils/macros.hpp
-  g++ ../test/$fileName ../src/log.cpp -lpthread -O3
+  g++ ../test/$fileName ../src/log.cpp ../src/nontemporal.c -lpthread -O3
   rm $PMEMDIR/log*.out
   ./a.out >> $OUTPUT_FILE
   config=$(($config + 1))

@@ -27,7 +27,11 @@ namespace mcsLog {
   static void *writeHelper(void *entry) {
     const char *value = reinterpret_cast<struct LogEntry *>(entry)->getEntry();
     const unsigned long long length = reinterpret_cast<struct LogEntry *>(entry)->getEntryLength();
-    log[assignLogCounter.fetch_add(1)]->Write(value, length);
+    if (IS_TEMPORAL) {
+      log[assignLogCounter.fetch_add(1)]->Write(value, length);
+    } else {
+      log[assignLogCounter.fetch_add(1)]->WriteNT(value, length);
+    }
   }
 
   void timePthreadCreates() {
@@ -84,18 +88,9 @@ int main() {
   mcsLog::timePthreadCreates();
   mcsLog::InitWriters();
   float bandwidth = (mcsLog::dataWritten * 1.0)/(mcsLog::writingTime - mcsLog::threadCreateTimes);
-  std::cout << "sync=false, " << NUM_THREADS << ", " << VAL_SIZE << " B, ";
+  std::cout << "isTemporal=" << IS_TEMPORAL << ", " << NUM_THREADS << ", " << VAL_SIZE << " B, ";
   std::cout << ITERATIONS << ", " << (mcsLog::dataWritten * 1.0)/1000000000 << " GiB, ";
   std::cout << ((mcsLog::writingTime - mcsLog::threadCreateTimes)*1.0)/1000000000 << " s, ";
   std::cout << bandwidth << " GiB/s" << std::endl;
-  /*
-  std::cout << "#Threads  : " << NUM_THREADS << std::endl;
-  std::cout << "ValueSize : " << VAL_SIZE << std::endl;
-  std::cout << "Iterations: " << ITERATIONS << std::endl;
-  std::cout << "Bandwidth : " << bandwidth << " GiB/s" << std::endl;
-  std::cout << "TotalTime : " << ((mcsLog::writingTime - mcsLog::threadCreateTimes)*1.0)/1000000000  << " s"<< std::endl;
-  std::cout << "TotalData : " << (mcsLog::dataWritten * 1.0)/1000000000 << " GiB" << std::endl;
-  // checkLogEntries(log);
-  */
 }
 
